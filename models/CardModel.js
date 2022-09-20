@@ -1,7 +1,7 @@
 export class CardModel {
-    constructor(id, pathCardImage) {
+    constructor(id, uriImage) {
         this.id = id 
-        this.pathCardImage = pathCardImage
+        this.uriImage = uriImage
         this.matched = false
     }
 }

@@ -1,4 +1,4 @@
-import { View, StyleSheet, useWindowDimensions } from 'react-native'
+import { View, StyleSheet, Text, useWindowDimensions } from 'react-native'
 import createCards from "../../business-logic/createCards";
 import { useState, useEffect } from 'react'
 import Card from '../Card/Card';
@@ -6,12 +6,20 @@ import difficultyEnum from '../../enums/difficultyEnum'
 
 export default function MemoryGame({ difficulty }) {
   //#region States
-  const createdCards = createCards(difficulty)
-  const [cards, setCards] = useState(createdCards)
+  const [cards, setCards] = useState(createCards(difficulty))
   const [attempts, setAttempts] = useState(0)
   const [firstChoice, setFirstChoice] = useState(null)
   const [secondChoice, setSecondChoice] = useState(null)
   const [disabled, setDisabled] = useState(false)
+  const [score, setScore] = useState(30)
+  const [lost, setLost] = useState(false)
+  const [win, setWin] = useState(false)
+  const [gamesPlayed, setGamesPlayed] = useState(0)
+  const [wins, setWins] = useState(0)
+  const [defeats, setDefeats] = useState(0)
+  const [matches, setMatches] = useState(0)
+  const [totalMatches, setTotalMatches] = useState(cards.length / 2)
+  const [bestScore, setBestScore] = useState(0)
   //#endregion
 
   //#region Collateral Effects
@@ -22,21 +30,69 @@ export default function MemoryGame({ difficulty }) {
 
     setDisabled(true)
 
-    if (firstChoice.pathCardImage === secondChoice.pathCardImage) {
+    if (firstChoice.uriImage === secondChoice.uriImage) {
+      setScore(previousScore => previousScore + 20)
+      setMatches(previousMatches => previousMatches + 1)
       setCards(previousCard => {
         return previousCard.map(card => {
-          if (card.pathCardImage === firstChoice.pathCardImage) {
+          if (card.uriImage === firstChoice.uriImage) {            
             return { ...card, matched: true }
           }
           return card
         })
       })
+      resetChoices()
+      increaseAttempts()
+      setDisabled(false)
+      return
     }
 
-    resetChoices()
-    increaseAttempts()
-    setDisabled(false)
+    if (score === 0) {
+      setLost(true)
+      return
+    }    
+
+    setTimeout(() => {
+      resetChoices()
+      increaseAttempts()
+      setScore(previousScore => previousScore - 5)
+      setDisabled(false)
+    }, 500)
   }, [firstChoice, secondChoice])
+
+  useEffect(() => {
+    if (lost || win) {
+      setCards(createCards(difficulty))
+      setDisabled(false)
+      setAttempts(0)
+      setFirstChoice(null)
+      setSecondChoice(null)      
+      setGamesPlayed(previousGamesPlayed => previousGamesPlayed + 1)
+      setMatches(0)
+      setTotalMatches(cards.length / 2)
+
+      if (win && (score > bestScore)) {
+        setBestScore(score)
+      }
+      setScore(30)
+    }
+
+    if (lost) {
+      setLost(false)
+      setDefeats(defeats => defeats + 1)
+    }
+    if (win) {
+      setWin(false)
+      setWins(wins => wins + 1)
+    }
+  }, [lost, win])
+
+  useEffect(() => {
+    if (matches === totalMatches) {
+      setWin(true)
+    }
+  }, [matches])
+
   //#endregion
 
   //#region Logic
@@ -50,14 +106,12 @@ export default function MemoryGame({ difficulty }) {
   }
 
   const resetChoices = () => {
-    setTimeout(() => {
-      setFirstChoice(null)
-      setSecondChoice(null)
-    }, 1500)
+    setFirstChoice(null)
+    setSecondChoice(null)
   }
 
   const increaseAttempts = () => {
-    setAttempts(previousAttempt => previousAttempt++)
+    setAttempts(previousAttempt => previousAttempt + 1)
   }
   //#endregion
 
@@ -83,26 +137,52 @@ export default function MemoryGame({ difficulty }) {
     container: {
       flex: 1,
       flexDirection: 'column',
-      flexWrap: 'no-wrap',
-      backgroundColor: 'yellow'
+      flexWrap: 'no-wrap'
     },
     cardContainer: {
       flex: 8,
       flexDirection: 'column',
       flexWrap: 'nowrap',
-      backgroundColor: 'black'
+      backgroundColor: '#DB7741',
+      borderRadius: 15,
+      margin: 5
     },
     rowCardContainer: {
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-evenly'
+      justifyContent: 'space-evenly',
     },
     statusGameContainer: {
       flex: 2,
-      flexDirection: 'row',
+      flexDirection: 'column',
       flexWrap: 'no-wrap',
-      backgroundColor: 'red'
+      backgroundColor: '#EDB45E',
+      borderRadius: 15,
+      margin: 5
+    },
+    statusMainContainer: {
+      flex: 2,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    statusBestPlaysContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    statusGeneralInformations: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    text: {
+      fontSize: '115%',
+      fontFamily: 'sans-serif',
+      margin: 5
     }
   })
   //#endregion
@@ -164,6 +244,18 @@ export default function MemoryGame({ difficulty }) {
   return (
     <View style={styles.container}>
       <View style={styles.statusGameContainer}>
+        <View style={styles.statusMainContainer}>          
+          <Text style={styles.text}>Attempts: {attempts}</Text>
+          <Text style={styles.text}>Score: {score}</Text>
+        </View>
+        <View style={styles.statusBestPlaysContainer}>          
+          <Text style={styles.text}>Best Score: {bestScore}</Text>
+        </View>
+        <View style={styles.statusGeneralInformations}>          
+          <Text style={styles.text}>Games Played: {gamesPlayed}</Text>
+          <Text style={styles.text}>Wins: {wins}</Text>
+          <Text style={styles.text}>Defeats: {defeats}</Text>
+        </View>
       </View>
       <View style={styles.cardContainer}>
         {rowComponents}
