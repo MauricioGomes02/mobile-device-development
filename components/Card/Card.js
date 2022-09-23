@@ -7,20 +7,19 @@ export default function Card({
   disabled, 
   size }) {
   
-  //#region Delegates
-  const hundlePress = () => {
-    if (!disabled && !visible) {
-      handleChoice(card)
+  const model = {
+    hundlePress: () => {
+      if (!disabled && !visible) {
+        handleChoice(card)
+      }
     }
   }
-  //#endregion  
 
-  //#region Styles
   const styles = StyleSheet.create({
     card: {
       width: size,
       height: size,
-      borderRadius: 15,
+      borderRadius: 5,
       backgroundColor: 'white',
     },
     button: {
@@ -30,20 +29,19 @@ export default function Card({
       position: "absolute",
       width: size,
       height: size,
-      borderRadius: 15,
+      borderRadius: 5,
       resizeMode: "stretch"
     },
     imageNotVisibled: {
       display: "none"
     }
   })
-  //#endregion
 
   const defaultUriImage = "https://www.educlub.com.br/wp-content/uploads/2019/06/silhuetas-de-animais-mamiferos-para-imprimir-leao.png"
 
   return (
     <View style={styles.card}>
-      <TouchableOpacity style={styles.button} onPress={hundlePress}>
+      <TouchableOpacity style={styles.button} onPress={model.hundlePress}>
         <Image
           style={visible ? styles.image : styles.imageNotVisibled}
           source={{ uri : card.uriImage }}/>

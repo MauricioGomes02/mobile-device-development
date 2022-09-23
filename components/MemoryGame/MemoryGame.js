@@ -140,11 +140,11 @@ export default function MemoryGame({ difficulty }) {
       flexWrap: 'no-wrap'
     },
     cardContainer: {
-      flex: 8,
+      flex: 9,
       flexDirection: 'column',
       flexWrap: 'nowrap',
       backgroundColor: '#DB7741',
-      borderRadius: 15,
+      borderRadius: 5,
       margin: 5
     },
     rowCardContainer: {
@@ -158,11 +158,11 @@ export default function MemoryGame({ difficulty }) {
       flexDirection: 'column',
       flexWrap: 'no-wrap',
       backgroundColor: '#EDB45E',
-      borderRadius: 15,
+      borderRadius: 5,
       margin: 5
     },
     statusMainContainer: {
-      flex: 2,
+      flex: 1,
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center'
@@ -180,8 +180,7 @@ export default function MemoryGame({ difficulty }) {
       alignItems: 'center'
     },
     text: {
-      fontSize: '115%',
-      fontFamily: 'sans-serif',
+      fontSize: 15,
       margin: 5
     }
   })
@@ -245,16 +244,16 @@ export default function MemoryGame({ difficulty }) {
     <View style={styles.container}>
       <View style={styles.statusGameContainer}>
         <View style={styles.statusMainContainer}>          
-          <Text style={styles.text}>Attempts: {attempts}</Text>
-          <Text style={styles.text}>Score: {score}</Text>
+          <Text style={styles.text}>Tentativas: {attempts}</Text>
+          <Text style={styles.text}>Pontuação: {score}</Text>
         </View>
         <View style={styles.statusBestPlaysContainer}>          
-          <Text style={styles.text}>Best Score: {bestScore}</Text>
+          <Text style={styles.text}>Melhor Pontuação: {bestScore}</Text>
         </View>
         <View style={styles.statusGeneralInformations}>          
-          <Text style={styles.text}>Games Played: {gamesPlayed}</Text>
-          <Text style={styles.text}>Wins: {wins}</Text>
-          <Text style={styles.text}>Defeats: {defeats}</Text>
+          <Text style={styles.text}>Partidas Jogadas: {gamesPlayed}</Text>
+          <Text style={styles.text}>Vitórias: {wins}</Text>
+          <Text style={styles.text}>Derrotas: {defeats}</Text>
         </View>
       </View>
       <View style={styles.cardContainer}>
