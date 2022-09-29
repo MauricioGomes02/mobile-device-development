@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, useWindowDimensions } from 'react-native'
+import { View, StyleSheet, Text, useWindowDimensions, Alert, Platform } from 'react-native'
 import createCards from "../../business-logic/createCards";
 import { useState, useEffect } from 'react'
 import Card from '../Card/Card';
@@ -79,10 +79,38 @@ export default function MemoryGame({ difficulty }) {
 
     if (lost) {
       setLost(false)
+      if (Platform.OS == "web") {
+        window.confirm("Você perdeu!")
+      }
+      else {
+        Alert.alert(
+          "",
+          "Você perdeu!",
+          [
+            {
+              text: "OK"          
+            }
+          ]
+        )        
+      }
       setDefeats(defeats => defeats + 1)
     }
     if (win) {
       setWin(false)
+      if (Platform.OS == "web") {
+        window.confirm("Você ganhou!")
+      }
+      else {
+        Alert.alert(
+          "",
+          "Você ganhou!",
+          [
+            {
+              text: "OK"            
+            }
+          ]
+        )        
+      }
       setWins(wins => wins + 1)
     }
   }, [lost, win])
